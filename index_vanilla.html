@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users and Posts</title>
+    <style>
+        #main-table tr {
+            text-align: center;
+        }
+        #main-table td {
+            padding: 0.2em;
+        }
+        .clickable {
+            cursor: pointer;
+            color: blue;
+            text-decoration: underline;
+        }
+        dt {
+            text-decoration: underline;
+        }
+        dd {
+            font-style: italic;
+        }
+    </style>
+    <script>
+        // load script and make it available upon window load
+        window.onload = () => {
+
+            // get references to elements in body
+            const mainTable = document.querySelector("#main-table");
+            const mainOutput = document.querySelector("#main-output");
+            const userNameArray = [];
+            // base url for API, along with specific page route endings
+            const urlBase = "https://jsonplaceholder.typicode.com";
+            const urlEndUsers = "/users";
+            const urlEndPosts = "/posts";
+            
+            // get json data from api endpoint
+            function getInfo(url) {
+                let httpReq = new XMLHttpRequest();
+                httpReq.open("GET", url, false);
+                httpReq.send(null);
+                return httpReq.responseText;
+            }
+
+            const jsonUsers = JSON.parse(getInfo(urlBase + urlEndUsers));
+            const jsonPosts = JSON.parse(getInfo(urlBase + urlEndPosts));
+
+            for (let i = 0; i < jsonUsers.length; i++) {
+                mainTable.innerHTML += `
+                    <tr>
+                        <td>${jsonUsers[i].id}</td>
+                        <td><span class='clickable'>${jsonUsers[i].name}</span></td>
+                        <td>${jsonUsers[i].username}</td>
+                    </tr>
+                `
+                userNameArray[i] = jsonUsers[i].name;
+            }
+            
+            const users = document.querySelectorAll(".clickable");            
+
+            users.forEach(user => {
+                user.addEventListener("click", () => {
+                    mainOutput.innerHTML = "";
+                    for (let j = 0; j < jsonPosts.length; j++) {
+                        if (jsonPosts[j].userId == userNameArray.indexOf(user.textContent) + 1) {
+                            mainOutput.innerHTML += `
+                                <dt>${jsonPosts[j].title}</dt>
+                                <dd>${jsonPosts[j].body}</dd>
+                            `
+                        }
+                    }
+                });
+            });
+            
+        }
+
+    </script>
+</head>
+<body>
+    <table border="2" id="main-table">
+        <thead>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Username</th>
+        </thead>
+    </table>
+    <br />
+    <div id="main-output"></div>
+</body>
+</html>
