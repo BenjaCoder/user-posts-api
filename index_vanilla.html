@@ -48,6 +48,7 @@
             const jsonUsers = JSON.parse(getInfo(urlBase + urlEndUsers));
             const jsonPosts = JSON.parse(getInfo(urlBase + urlEndPosts));
 
+            // loop to create contents of table using data from JSON
             for (let i = 0; i < jsonUsers.length; i++) {
                 mainTable.innerHTML += `
                     <tr>
@@ -59,8 +60,14 @@
                 userNameArray[i] = jsonUsers[i].name;
             }
             
+            // gather all elements (users' names) that act as buttons
             const users = document.querySelectorAll(".clickable");            
 
+            /*
+                add click functionality for each user, checking if position of user's name
+                in array (+1) is same as post id; text is cleared before new post text is
+                inserted
+            */
             users.forEach(user => {
                 user.addEventListener("click", () => {
                     mainOutput.innerHTML = "";
